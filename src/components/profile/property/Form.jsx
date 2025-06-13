@@ -1,0 +1,433 @@
+import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
+import useProperty from '../../../context_store/property_store.js';
+import useAuth from '../../../context_store/auth_store.js';
+import { uploadMultipleImages } from '../../../utils/cloudinary';
+
+const AddPropertyForm = ({ onClose, onSuccess }) => {
+  const { amenities, fetchAmenities, addProperty, loading } = useProperty();
+  const { user } = useAuth();
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
+  const [formData, setFormData] = useState({
+    // Property table fields
+    apn: '', // Will be generated on backend
+    builtYear: '',
+    status: 'Available',
+    mapUrl: '',
+    area: '',
+    state: '',
+    city: '',
+    district: '',
+    localAddress: '',
+    pincode: '',
+    neighborhoodInfo: '',
+    title: '',
+    availableFor: 'Rent',
+    type: '',
+    tourUrl: '',
+    ownerId: user?.id || '',
+
+    // Individual and Shared amenities
+    individualAmenities: [],
+    sharedAmenities: [],
+
+    // Rent/Sell specific fields
+    monthlyRent: '',
+    securityDeposit: '',
+    price: '',
+
+    // Property Images
+    images: []
+  });
+
+  useEffect(() => {
+    fetchAmenities();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAmenityChange = (amenity, type) => {
+    setFormData(prev => ({
+      ...prev,
+      [type]: prev[type].includes(amenity)
+        ? prev[type].filter(a => a !== amenity)
+        : [...prev[type], amenity]
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map(file => ({
+      file,
+      description: '',
+      id: Math.random().toString(36).substr(2, 9),
+      previewUrl: URL.createObjectURL(file)
+    }));
+    
+    setFormData(prev => ({
+      ...prev,
+      images: [...prev.images, ...newImages]
+    }));
+  };
+
+  const handleImageDescriptionChange = (id, description) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.map(img => 
+        img.id === id ? { ...img, description } : img
+      )
+    }));
+  };
+
+  const handleRemoveImage = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter(img => img.id !== id)
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate user is logged in
+    if (!user?.id) {
+      console.error('User not logged in');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      
+      // Upload images to Cloudinary first
+      const imageFiles = formData.images.map(img => img.file);
+      let cloudinaryUrls = [];
+      
+      try {
+        cloudinaryUrls = await uploadMultipleImages(imageFiles);
+      } catch (uploadError) {
+        console.error('Failed to upload images:', uploadError);
+        alert('Failed to upload images. Please try again.');
+        setUploading(false);
+        return;
+      }
+      
+      // Create the final form data with Cloudinary URLs
+      const finalFormData = {
+        ...formData,
+        ownerId: user.id, // Ensure ownerId is set
+        images: formData.images.map((img, index) => ({
+          url: cloudinaryUrls[index],
+          description: img.description
+        }))
+      };
+
+      // Remove file objects and preview URLs before sending
+      const cleanFormData = {
+        ...finalFormData,
+        images: finalFormData.images.map(({ url, description }) => ({
+          url,
+          description
+        }))
+      };
+
+      // console.log('Submitting property data:', cleanFormData); // Debug log
+      await addProperty(cleanFormData);
+      onSuccess();
+    } catch (error) {
+      console.error('Failed to add property:', error);
+      alert('Failed to add property. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center mt-16">
+      <div className="bg-[#282A36] w-full h-full overflow-y-auto px-5 mx-5 mt-10 mb-14 pb-5">
+        <div className="flex justify-between items-center mb-6 pt-4">
+          <h2 className="text-2xl font-bold text-white">Add New Property</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Property Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="number"
+              name="builtYear"
+              placeholder="Built Year"
+              value={formData.builtYear}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="number"
+              name="area"
+              placeholder="Area (sq ft)"
+              value={formData.area}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="state"
+              placeholder="State"
+              value={formData.state}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="city"
+              placeholder="City"
+              value={formData.city}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="district"
+              placeholder="District"
+              value={formData.district}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="localAddress"
+              placeholder="Local Address"
+              value={formData.localAddress}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="number"
+              name="pincode"
+              placeholder="Pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="title"
+              placeholder="Property Title"
+              value={formData.title}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <select
+              name="availableFor"
+              value={formData.availableFor}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="Rent">Rent</option>
+              <option value="Sell">Sell</option>
+              <option value="Both">Both</option>
+            </select>
+            <input
+              type="text"
+              name="type"
+              placeholder="Property Type"
+              value={formData.type}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="mapUrl"
+              placeholder="Map URL (Optional)"
+              value={formData.mapUrl}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              name="tourUrl"
+              placeholder="Virtual Tour URL (Optional)"
+              value={formData.tourUrl}
+              onChange={handleChange}
+              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <textarea
+            name="neighborhoodInfo"
+            placeholder="Neighborhood Information"
+            value={formData.neighborhoodInfo}
+            onChange={handleChange}
+            className="w-full bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows="3"
+            required
+          />
+
+          {/* Rent/Sell Specific Fields */}
+          {(formData.availableFor === 'Rent' || formData.availableFor === 'Both') && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="number"
+                name="monthlyRent"
+                placeholder="Monthly Rent"
+                value={formData.monthlyRent}
+                onChange={handleChange}
+                className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required={formData.availableFor === 'Rent' || formData.availableFor === 'Both'}
+              />
+              <input
+                type="number"
+                name="securityDeposit"
+                placeholder="Security Deposit"
+                value={formData.securityDeposit}
+                onChange={handleChange}
+                className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required={formData.availableFor === 'Rent' || formData.availableFor === 'Both'}
+              />
+            </div>
+          )}
+
+          {(formData.availableFor === 'Sell' || formData.availableFor === 'Both') && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="number"
+                name="price"
+                placeholder="Selling Price"
+                value={formData.price}
+                onChange={handleChange}
+                className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required={formData.availableFor === 'Sell' || formData.availableFor === 'Both'}
+              />
+            </div>
+          )}
+
+          {/* Amenities */}
+          <div className="space-y-4">
+            <h3 className="text-white font-semibold">Individual Amenities</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {amenities.map((amenity) => (
+                <label key={amenity} className="flex items-center space-x-2 text-white">
+                  <input
+                    type="checkbox"
+                    checked={formData.individualAmenities.includes(amenity)}
+                    onChange={() => handleAmenityChange(amenity, 'individualAmenities')}
+                    className="rounded text-blue-500 focus:ring-blue-500"
+                  />
+                  <span>{amenity}</span>
+                </label>
+              ))}
+            </div>
+
+            <h3 className="text-white font-semibold">Shared Amenities</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {amenities.map((amenity) => (
+                <label key={amenity} className="flex items-center space-x-2 text-white">
+                  <input
+                    type="checkbox"
+                    checked={formData.sharedAmenities.includes(amenity)}
+                    onChange={() => handleAmenityChange(amenity, 'sharedAmenities')}
+                    className="rounded text-blue-500 focus:ring-blue-500"
+                  />
+                  <span>{amenity}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Property Images */}
+          <div className="space-y-4">
+            <h3 className="text-white font-semibold">Property Images</h3>
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center space-x-4">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={uploading}
+                  className="w-full bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                />
+                <span className="text-gray-400 text-sm">
+                  {formData.images.length} images selected
+                </span>
+              </div>
+
+              {uploading && (
+                <div className="text-white text-sm">
+                  Uploading images to Cloudinary... Please wait
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {formData.images.map((image) => (
+                  <div key={image.id} className="relative bg-[#1A1A2E] rounded-lg p-4">
+                    <button
+                      onClick={() => handleRemoveImage(image.id)}
+                      className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                    <div className="aspect-w-16 aspect-h-9 mb-3">
+                      <img
+                        src={image.previewUrl}
+                        alt="Property"
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                    </div>
+                    <textarea
+                      value={image.description}
+                      onChange={(e) => handleImageDescriptionChange(image.id, e.target.value)}
+                      placeholder="Add image description..."
+                      className="w-full bg-[#282A36] text-white px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      rows="2"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-300 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || uploading}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+            >
+              {loading || uploading ? 'Processing...' : 'Add Property'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddPropertyForm; 
