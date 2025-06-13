@@ -7,13 +7,14 @@ import Profile from './pages/Profile';
 import Navbar from './components/navbar/Navbar';
 import useAuth from './context_store/auth_store';
 import Explore from './pages/Explore';
+import Insights from './pages/Insights';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/logian" />;
   }
 
   return children;
@@ -87,6 +88,10 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+
+            <Route path="/insights/:apn" element={<ProtectedRoute>
+                  <Insights />
+                </ProtectedRoute>} />
 
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" />} />

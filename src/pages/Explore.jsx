@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
-import PropertyCard from '../components/property/PropertyCard';
+import PropertyCard from '../components/cards/PropertyCard';
 import useProperty from '../context_store/property_store';
 
 const Explore = () => {
@@ -11,12 +11,17 @@ const Explore = () => {
     fetchAllProperties();
   }, [fetchAllProperties]);
 
-  const filteredProperties = properties.filter(property => 
-    property.Title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property.City.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property.State.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property.District.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProperties = properties.filter(property => {
+    if (!property) return false;
+    
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      (property.title?.toLowerCase() || '').includes(searchLower) ||
+      (property.city?.toLowerCase() || '').includes(searchLower) ||
+      (property.state?.toLowerCase() || '').includes(searchLower) ||
+      (property.district?.toLowerCase() || '').includes(searchLower)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-[#1A1A2E] p-8">
@@ -48,7 +53,7 @@ const Explore = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProperties.map((property) => (
-                <PropertyCard key={property.APN} property={property} />
+                <PropertyCard key={property.apn} property={property} />
               ))}
             </div>
           )}

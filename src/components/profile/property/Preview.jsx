@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { PlusCircle } from 'lucide-react';
 import useAuth from '../../../context_store/auth_store';
 import useProperty from '../../../context_store/property_store';
-import PropertyCard from '../../property/PropertyCard';
+import PropertyCard from '../../cards/PropertyCard';
 
 const AddPropertyPreview = ({ onAddClick }) => {
   const { user } = useAuth();
@@ -43,7 +43,7 @@ const AddPropertyPreview = ({ onAddClick }) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map((property) => (
-              <PropertyCard key={property.APN} property={property} />
+              <PropertyCard key={property.apn} property={property} />
             ))}
           </div>
         )}

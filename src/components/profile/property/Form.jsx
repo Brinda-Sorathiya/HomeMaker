@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react';
 import useProperty from '../../../context_store/property_store.js';
 import useAuth from '../../../context_store/auth_store.js';
 import { uploadMultipleImages } from '../../../utils/cloudinary';
@@ -38,7 +38,16 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
     price: '',
 
     // Property Images
-    images: []
+    images: [],
+
+    // Add floors array to store floor-specific data
+    floors: [{
+      floorNo: 0,
+      hallNo: 0,
+      kitchenNo: 0,
+      bathNo: 0,
+      bedroomNo: 0
+    }]
   });
 
   useEffect(() => {
@@ -90,6 +99,35 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter(img => img.id !== id)
+    }));
+  };
+
+  const handleFloorChange = (floorIndex, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      floors: prev.floors.map((floor, index) => 
+        index === floorIndex ? { ...floor, [field]: value } : floor
+      )
+    }));
+  };
+
+  const addFloor = () => {
+    setFormData(prev => ({
+      ...prev,
+      floors: [...prev.floors, {
+        floorNo: prev.floors.length + 1,
+        hallNo: 1,
+        kitchenNo: 1,
+        bathNo: 1,
+        bedroomNo: 1
+      }]
+    }));
+  };
+
+  const removeFloor = (floorIndex) => {
+    setFormData(prev => ({
+      ...prev,
+      floors: prev.floors.filter((_, index) => index !== floorIndex)
     }));
   };
 
@@ -353,6 +391,85 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Floor Information Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-white font-semibold">Floor Information</h3>
+              <button
+                type="button"
+                onClick={addFloor}
+                className="flex items-center space-x-1 text-blue-500 hover:text-blue-400"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Floor</span>
+              </button>
+            </div>
+
+            {formData.floors.map((floor, index) => (
+              <div key={index} className="bg-[#1A1A2E] p-4 rounded-lg space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-white font-medium">Floor {floor.floorNo}</h4>
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => removeFloor(index)}
+                      className="text-red-500 hover:text-red-400"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Halls</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={floor.hallNo}
+                      onChange={(e) => handleFloorChange(index, 'hallNo', parseInt(e.target.value))}
+                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Kitchens</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={floor.kitchenNo}
+                      onChange={(e) => handleFloorChange(index, 'kitchenNo', parseInt(e.target.value))}
+                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Bathrooms</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={floor.bathNo}
+                      onChange={(e) => handleFloorChange(index, 'bathNo', parseInt(e.target.value))}
+                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Bedrooms</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={floor.bedroomNo}
+                      onChange={(e) => handleFloorChange(index, 'bedroomNo', parseInt(e.target.value))}
+                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Property Images */}
