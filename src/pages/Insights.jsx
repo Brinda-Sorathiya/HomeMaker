@@ -1,28 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import DetailsCard from '../components/cards/DetailsCard';
 import useProperty from '../context_store/property_store';
 
 const Insights = () => {
-  const { apn } = useParams();
-  const navigate = useNavigate();
-  const { properties, loading, error, fetchAllProperties } = useProperty();
-  const [property, setProperty] = useState(null);
+  const { currentInsightProperty, loading, error } = useProperty();
 
-  useEffect(() => {
-    fetchAllProperties();
-  }, [fetchAllProperties]);
-
-  useEffect(() => {
-    if (properties.length > 0) {
-      const foundProperty = properties.find(p => p.apn === apn);
-      if (foundProperty) {
-        setProperty(foundProperty);
-      } else {
-        navigate('/explore');
-      }
-    }
-  }, [properties, apn, navigate]);
+  // useEffect(() => {
+  //   // If we don't have the current property in the store, fetch all properties
+  //   if (!currentInsightProperty) {
+  //     fetchAllProperties();
+  //   }
+  // }, [currentInsightProperty, fetchAllProperties]);
 
   if (loading) {
     return (
@@ -44,7 +32,7 @@ const Insights = () => {
     );
   }
 
-  if (!property) {
+  if (!currentInsightProperty) {
     return (
       <div className="min-h-screen bg-[#1A1A2E] p-8">
         <div className="max-w-7xl mx-auto">
@@ -57,7 +45,7 @@ const Insights = () => {
   return (
     <div className="min-h-screen bg-[#1A1A2E] p-8">
       <div className="max-w-7xl mx-auto">
-        <DetailsCard property={property} />
+        <DetailsCard property={currentInsightProperty} />
       </div>
     </div>
   );

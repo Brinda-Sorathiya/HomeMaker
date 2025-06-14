@@ -6,13 +6,8 @@ import PropertyCard from '../../cards/PropertyCard';
 
 const AddPropertyPreview = ({ onAddClick }) => {
   const { user } = useAuth();
-  const { properties, loading, error, fetchPropertiesByOwner } = useProperty();
+  const { myproperties, loading, error } = useProperty();
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchPropertiesByOwner(user.id);
-    }
-  }, [user?.id, fetchPropertiesByOwner]);
 
   return (
     <div className="min-h-screen bg-[#1A1A2E] p-4">
@@ -38,11 +33,11 @@ const AddPropertyPreview = ({ onAddClick }) => {
           <div className="text-white">Loading properties...</div>
         ) : error ? (
           <div className="text-red-500">{error}</div>
-        ) : properties.length === 0 ? (
+        ) : myproperties.length === 0 ? (
           <div className="text-gray-400">No properties found. Add your first property!</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((property) => (
+            {myproperties.map((property) => (
               <PropertyCard key={property.apn} property={property} />
             ))}
           </div>

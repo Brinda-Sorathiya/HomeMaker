@@ -1,9 +1,11 @@
 import React from 'react';
-import { MapPin, Bed, Bath, Square, Home } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, Home, Utensils } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import useProperty from '../../context_store/property_store';
 
 const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
+  const { setCurrentInsightProperty } = useProperty();
   const {
     title,
     type,
@@ -23,13 +25,22 @@ const PropertyCard = ({ property }) => {
   const mainImage = images?.[0]?.url || 'https://via.placeholder.com/400x300';
 
   // Calculate total facilities across all floors
-  const totalFacilities = floors?.reduce((acc, floor) => ({
-    beds: (acc.beds || 0) + (floor.bedroom_no || 0),
-    baths: (acc.baths || 0) + (floor.bath_no || 0),
-    halls: (acc.halls || 0) + (floor.hall_no || 0)
-  }), { beds: 0, baths: 0, halls: 0 }) || { beds: 0, baths: 0, halls: 0 };
+  const totalFacilities = floors?.reduce((acc, floor) => {
+    // console.log('Processing floor:', floor);
+    const result = {
+      beds: (acc.beds || 0) + (Number(floor.bedroomNo) || 0),
+      baths: (acc.baths || 0) + (Number(floor.bathNo) || 0),
+      halls: (acc.halls || 0) + (Number(floor.hallNo) || 0),
+      kitchens: (acc.kitchens || 0) + (Number(floor.kitchenNo) || 0)
+    };
+    // console.log('Running total:', result);
+    return result;
+  }, { beds: 0, baths: 0, halls: 0, kitchens: 0 }) || { beds: 0, baths: 0, halls: 0, kitchens: 0 };
+
+  // console.log('Final totalFacilities:', totalFacilities);
 
   const handleViewDetails = () => {
+    setCurrentInsightProperty(property);
     navigate(`/insights/${apn}`);
   };
 
@@ -45,6 +56,11 @@ const PropertyCard = ({ property }) => {
         <div className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-sm">
           {status}
         </div>
+        {available_for && (
+          <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-sm">
+            {available_for}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -76,6 +92,10 @@ const PropertyCard = ({ property }) => {
             <Home className="w-4 h-4 mr-1" />
             <span>{totalFacilities.halls} Halls</span>
           </div>
+          <div className="flex items-center">
+            <Utensils className="w-4 h-4 mr-1" />
+            <span>{totalFacilities.kitchens} Kitchens</span>
+          </div>
         </div>
 
         {/* Price */}
@@ -102,4 +122,4 @@ const PropertyCard = ({ property }) => {
   );
 };
 
-export default PropertyCard; 
+export default PropertyCard;

@@ -5,11 +5,16 @@ const useProperty = create((set) => ({
   isAddPropertyModalOpen: false,
   amenities: [],
   properties: [],
+  myproperties : [],
+  currentInsightProperty: null,
   loading: false,
   error: null,
 
   // Set modal state
   setIsAddPropertyModalOpen: (isOpen) => set({ isAddPropertyModalOpen: isOpen }),
+
+  // Set current insight property
+  setCurrentInsightProperty: (property) => set({ currentInsightProperty: property }),
 
   // Fetch amenities from backend
   fetchAmenities: async () => {
@@ -56,10 +61,34 @@ const useProperty = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.get(`http://localhost:3000/property/properties/owner/${ownerId}`);
-      set({ properties: response.data, loading: false });
+      set({ myproperties: response.data, loading: false });
       return response.data;
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to fetch properties', loading: false });
+      throw error;
+    }
+  },
+
+  // Update property
+  updateProperty: async (apn, propertyData) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await axios.put(`http://localhost:3000/property/update/${apn}`, propertyData);
+      
+      // Update local state
+      set(state => ({
+        properties: state.properties.map(p => 
+          p.apn === apn ? { ...p, ...propertyData } : p
+        ),
+        myproperties: state.myproperties.map(p => 
+          p.apn === apn ? { ...p, ...propertyData } : p
+        ),
+        loading: false
+      }));
+      
+      return response.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to update property', loading: false });
       throw error;
     }
   },

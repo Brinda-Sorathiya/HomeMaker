@@ -4,12 +4,8 @@ import PropertyCard from '../components/cards/PropertyCard';
 import useProperty from '../context_store/property_store';
 
 const Explore = () => {
-  const { properties, loading, error, fetchAllProperties } = useProperty();
+  const { properties, loading, error} = useProperty();
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    fetchAllProperties();
-  }, [fetchAllProperties]);
 
   const filteredProperties = properties.filter(property => {
     if (!property) return false;

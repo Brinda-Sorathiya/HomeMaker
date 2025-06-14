@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Navbar from './components/navbar/Navbar';
 import useAuth from './context_store/auth_store';
+import useProperty from './context_store/property_store';
 import Explore from './pages/Explore';
 import Insights from './pages/Insights';
 
@@ -14,7 +15,7 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
-    return <Navigate to="/logian" />;
+    return <Navigate to="/login" />;
   }
 
   return children;
@@ -32,11 +33,31 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
-  const { initialize } = useAuth();
+  const { initialize, user } = useAuth();
+  const { fetchAmenities, fetchPropertiesByOwner, fetchAllProperties } = useProperty();
 
   useEffect(() => {
     initialize();
-  }, []);
+    fetchAmenities();
+    fetchAllProperties();
+    if (user?.id) {
+      fetchPropertiesByOwner(user.id);
+    }
+    const fetchData = async () => {
+      await initialize();
+      fetchAmenities();
+      fetchAllProperties();
+    };
+    
+    fetchData();
+  }, [initialize, fetchAmenities, fetchAllProperties]);
+
+  // Separate useEffect for user-dependent operations
+  useEffect(() => {
+    if (user?.id) {
+      fetchPropertiesByOwner(user.id);
+    }
+  }, [user, fetchPropertiesByOwner]);
 
   return (
     <Router>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus } from 'lucide-react';
+import { X, Plus, Minus, MapPin, Calendar, Building2, Utensils, Sparkles, BookOpen, IndianRupee, Layers } from 'lucide-react';
 import useProperty from '../../../context_store/property_store.js';
 import useAuth from '../../../context_store/auth_store.js';
 import { uploadMultipleImages } from '../../../utils/cloudinary';
@@ -42,7 +42,7 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
 
     // Add floors array to store floor-specific data
     floors: [{
-      floorNo: 0,
+      floorNo: 1,
       hallNo: 0,
       kitchenNo: 0,
       bathNo: 0,
@@ -116,10 +116,10 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
       ...prev,
       floors: [...prev.floors, {
         floorNo: prev.floors.length + 1,
-        hallNo: 1,
-        kitchenNo: 1,
-        bathNo: 1,
-        bedroomNo: 1
+        hallNo: 0,
+        kitchenNo: 0,
+        bathNo: 0,
+        bedroomNo: 0
       }]
     }));
   };
@@ -201,280 +201,301 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Property Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="number"
-              name="builtYear"
-              placeholder="Built Year"
-              value={formData.builtYear}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="number"
-              name="area"
-              placeholder="Area (sq ft)"
-              value={formData.area}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              value={formData.state}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              value={formData.city}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="district"
-              placeholder="District"
-              value={formData.district}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="localAddress"
-              placeholder="Local Address"
-              value={formData.localAddress}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="number"
-              name="pincode"
-              placeholder="Pincode"
-              value={formData.pincode}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="title"
-              placeholder="Property Title"
-              value={formData.title}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <select
-              name="availableFor"
-              value={formData.availableFor}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="Rent">Rent</option>
-              <option value="Sell">Sell</option>
-              <option value="Both">Both</option>
-            </select>
-            <input
-              type="text"
-              name="type"
-              placeholder="Property Type"
-              value={formData.type}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="mapUrl"
-              placeholder="Map URL (Optional)"
-              value={formData.mapUrl}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              name="tourUrl"
-              placeholder="Virtual Tour URL (Optional)"
-              value={formData.tourUrl}
-              onChange={handleChange}
-              className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <textarea
-            name="neighborhoodInfo"
-            placeholder="Neighborhood Information"
-            value={formData.neighborhoodInfo}
-            onChange={handleChange}
-            className="w-full bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="3"
-            required
-          />
-
-          {/* Rent/Sell Specific Fields */}
-          {(formData.availableFor === 'Rent' || formData.availableFor === 'Both') && (
+          <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+            <h3 className="text-xl font-semibold mb-4">Basic Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="number"
-                name="monthlyRent"
-                placeholder="Monthly Rent"
-                value={formData.monthlyRent}
+                name="builtYear"
+                placeholder="Built Year"
+                value={formData.builtYear}
                 onChange={handleChange}
-                className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required={formData.availableFor === 'Rent' || formData.availableFor === 'Both'}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <input
                 type="number"
-                name="securityDeposit"
-                placeholder="Security Deposit"
-                value={formData.securityDeposit}
+                name="area"
+                placeholder="Area (sq ft)"
+                value={formData.area}
                 onChange={handleChange}
-                className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required={formData.availableFor === 'Rent' || formData.availableFor === 'Both'}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
+              <input
+                type="text"
+                name="state"
+                placeholder="State"
+                value={formData.state}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="text"
+                name="city"
+                placeholder="City"
+                value={formData.city}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="text"
+                name="district"
+                placeholder="District"
+                value={formData.district}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="text"
+                name="localAddress"
+                placeholder="Local Address"
+                value={formData.localAddress}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="number"
+                name="pincode"
+                placeholder="Pincode"
+                value={formData.pincode}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="text"
+                name="title"
+                placeholder="Property Title"
+                value={formData.title}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <select
+                name="availableFor"
+                value={formData.availableFor}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="Rent">Rent</option>
+                <option value="Sell">Sell</option>
+                <option value="Both">Both</option>
+              </select>
+              <input
+                type="text"
+                name="type"
+                placeholder="Property Type"
+                value={formData.type}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <input
+                type="text"
+                name="mapUrl"
+                placeholder="Map URL (Optional)"
+                value={formData.mapUrl}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="text"
+                name="tourUrl"
+                placeholder="Virtual Tour URL (Optional)"
+                value={formData.tourUrl}
+                onChange={handleChange}
+                className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Neighborhood Information */}
+          <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+            <h3 className="text-xl font-semibold mb-4 flex items-center"><BookOpen className="w-6 h-6 mr-2" /> Neighborhood Information</h3>
+            <div>
+              <textarea
+                name="neighborhoodInfo"
+                placeholder="Neighborhood Information"
+                value={formData.neighborhoodInfo}
+                onChange={handleChange}
+                className="w-full bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows="3"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Rent/Sell Specific Fields */}
+          {(formData.availableFor === 'Rent' || formData.availableFor === 'Both') && (
+            <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+              <h3 className="text-xl font-semibold mb-4 flex items-center"><IndianRupee className="w-6 h-6 mr-2" /> Pricing</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="number"
+                  name="monthlyRent"
+                  placeholder="Monthly Rent"
+                  value={formData.monthlyRent}
+                  onChange={handleChange}
+                  className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required={formData.availableFor === 'Rent' || formData.availableFor === 'Both'}
+                />
+                <input
+                  type="number"
+                  name="securityDeposit"
+                  placeholder="Security Deposit"
+                  value={formData.securityDeposit}
+                  onChange={handleChange}
+                  className="bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required={formData.availableFor === 'Rent' || formData.availableFor === 'Both'}
+                />
+              </div>
             </div>
           )}
 
           {(formData.availableFor === 'Sell' || formData.availableFor === 'Both') && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="number"
-                name="price"
-                placeholder="Selling Price"
-                value={formData.price}
-                onChange={handleChange}
-                className="bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required={formData.availableFor === 'Sell' || formData.availableFor === 'Both'}
-              />
+            <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+              <h3 className="text-xl font-semibold mb-4 flex items-center"><IndianRupee className="w-6 h-6 mr-2" />Pricing</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="Selling Price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="w-full bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required={formData.availableFor === 'Sell' || formData.availableFor === 'Both'}
+                />
+              </div>
             </div>
           )}
 
           {/* Amenities */}
-          <div className="space-y-4">
-            <h3 className="text-white font-semibold">Individual Amenities</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {amenities.map((amenity) => (
-                <label key={amenity} className="flex items-center space-x-2 text-white">
-                  <input
-                    type="checkbox"
-                    checked={formData.individualAmenities.includes(amenity)}
-                    onChange={() => handleAmenityChange(amenity, 'individualAmenities')}
-                    className="rounded text-blue-500 focus:ring-blue-500"
-                  />
-                  <span>{amenity}</span>
-                </label>
-              ))}
-            </div>
+          <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+            <h3 className="text-xl font-semibold mb-4 flex items-center"><Sparkles className="w-6 h-6 mr-2" /> Amenities</h3>
+            <div className="space-y-4">
+              <h4 className="text-gray-400 mb-2">Individual Amenities</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {amenities.map((amenity) => (
+                  <label key={amenity} className="flex items-center space-x-2 text-white">
+                    <input
+                      type="checkbox"
+                      checked={formData.individualAmenities.includes(amenity)}
+                      onChange={() => handleAmenityChange(amenity, 'individualAmenities')}
+                      className="rounded text-blue-500 focus:ring-blue-500"
+                    />
+                    <span>{amenity}</span>
+                  </label>
+                ))}
+              </div>
 
-            <h3 className="text-white font-semibold">Shared Amenities</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {amenities.map((amenity) => (
-                <label key={amenity} className="flex items-center space-x-2 text-white">
-                  <input
-                    type="checkbox"
-                    checked={formData.sharedAmenities.includes(amenity)}
-                    onChange={() => handleAmenityChange(amenity, 'sharedAmenities')}
-                    className="rounded text-blue-500 focus:ring-blue-500"
-                  />
-                  <span>{amenity}</span>
-                </label>
-              ))}
+              <h4 className="text-gray-400 mb-2">Shared Amenities</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {amenities.map((amenity) => (
+                  <label key={amenity} className="flex items-center space-x-2 text-white">
+                    <input
+                      type="checkbox"
+                      checked={formData.sharedAmenities.includes(amenity)}
+                      onChange={() => handleAmenityChange(amenity, 'sharedAmenities')}
+                      className="rounded text-blue-500 focus:ring-blue-500"
+                    />
+                    <span>{amenity}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Floor Information Section */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-white font-semibold">Floor Information</h3>
-              <button
-                type="button"
-                onClick={addFloor}
-                className="flex items-center space-x-1 text-blue-500 hover:text-blue-400"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Floor</span>
-              </button>
-            </div>
-
-            {formData.floors.map((floor, index) => (
-              <div key={index} className="bg-[#1A1A2E] p-4 rounded-lg space-y-4">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-white font-medium">Floor {floor.floorNo}</h4>
-                  {index > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => removeFloor(index)}
-                      className="text-red-500 hover:text-red-400"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">Halls</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={floor.hallNo}
-                      onChange={(e) => handleFloorChange(index, 'hallNo', parseInt(e.target.value))}
-                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">Kitchens</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={floor.kitchenNo}
-                      onChange={(e) => handleFloorChange(index, 'kitchenNo', parseInt(e.target.value))}
-                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">Bathrooms</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={floor.bathNo}
-                      onChange={(e) => handleFloorChange(index, 'bathNo', parseInt(e.target.value))}
-                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">Bedrooms</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={floor.bedroomNo}
-                      onChange={(e) => handleFloorChange(index, 'bedroomNo', parseInt(e.target.value))}
-                      className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                </div>
+          <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+            <h3 className="text-xl font-semibold mb-4 flex items-center"><Layers className="w-6 h-6 mr-2" /> Floor Details</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-white font-semibold">Floor Information</h3>
+                <button
+                  type="button"
+                  onClick={addFloor}
+                  className="flex items-center space-x-1 text-blue-500 hover:text-blue-400"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Floor</span>
+                </button>
               </div>
-            ))}
+
+              {formData.floors.map((floor, index) => (
+                <div key={index} className="bg-[#1E1F2B] p-4 rounded-lg space-y-4 border border-gray-600">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-white font-medium">Floor {floor.floorNo}</h4>
+                    {index > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => removeFloor(index)}
+                        className="text-red-500 hover:text-red-400"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-1">Halls</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={floor.hallNo}
+                        onChange={(e) => handleFloorChange(index, 'hallNo', parseInt(e.target.value))}
+                        className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-1">Kitchens</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={floor.kitchenNo}
+                        onChange={(e) => handleFloorChange(index, 'kitchenNo', parseInt(e.target.value))}
+                        className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-1">Bathrooms</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={floor.bathNo}
+                        onChange={(e) => handleFloorChange(index, 'bathNo', parseInt(e.target.value))}
+                        className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-1">Bedrooms</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={floor.bedroomNo}
+                        onChange={(e) => handleFloorChange(index, 'bedroomNo', parseInt(e.target.value))}
+                        className="w-full bg-[#282A36] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Property Images */}
-          <div className="space-y-4">
-            <h3 className="text-white font-semibold">Property Images</h3>
+          <div className="mb-6 bg-[#282A36] p-4 rounded-lg  text-white">
+            <h3 className="text-xl font-semibold mb-4 flex items-center">Images</h3>
             <div className="flex flex-col space-y-4">
               <div className="flex items-center space-x-4">
                 <input
@@ -483,7 +504,7 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
                   accept="image/*"
                   onChange={handleImageChange}
                   disabled={uploading}
-                  className="w-full bg-[#1A1A2E] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="w-full bg-[#1E1F2B] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 />
                 <span className="text-gray-400 text-sm">
                   {formData.images.length} images selected
@@ -498,7 +519,7 @@ const AddPropertyForm = ({ onClose, onSuccess }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {formData.images.map((image) => (
-                  <div key={image.id} className="relative bg-[#1A1A2E] rounded-lg p-4">
+                  <div key={image.id} className="relative bg-[#1E1F2B] rounded-lg p-4 border border-gray-600">
                     <button
                       onClick={() => handleRemoveImage(image.id)}
                       className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors"

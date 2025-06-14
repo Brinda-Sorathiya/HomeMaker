@@ -69,7 +69,7 @@ const useAuth = create((set) => ({
           user: response.data.user, 
           isAuthenticated: true,
           loading: false 
-        });
+        })
       } catch (error) {
         console.error('Error initializing auth:', error);
         // If token is invalid, clear everything

@@ -43,4 +43,31 @@ export const uploadMultipleImages = async (files) => {
     console.error('Error uploading multiple images:', error);
     throw error;
   }
+};
+
+export const deleteFromCloudinary = async (publicUrl) => {
+  try {
+    // Extract public_id from the URL
+    const urlParts = publicUrl.split('/');
+    const publicId = urlParts[urlParts.length - 1].split('.')[0];
+    
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`,
+      {
+        public_id: publicId,
+        api_key: import.meta.env.VITE_CLOUDINARY_API_KEY,
+        api_secret: import.meta.env.VITE_CLOUDINARY_API_SECRET,
+        timestamp: Math.floor(Date.now() / 1000)
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Failed to delete image from Cloudinary');
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting from Cloudinary:', error);
+    throw error;
+  }
 }; 
