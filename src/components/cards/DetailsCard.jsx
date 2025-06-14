@@ -135,11 +135,11 @@ const DetailsCard = ({ property }) => {
           className="relative w-full h-full overflow-hidden cursor-pointer"
           onClick={handleImageClick}
         >
-          <img
+        <img
             src={images?.[currentImageIndex]?.url || 'https://via.placeholder.com/1200x800'}
-            alt={title}
+          alt={title}
             className="w-full h-full object-cover transition-transform duration-500 ease-in-out transform hover:scale-105"
-          />
+        />
           {/* Glowing Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           

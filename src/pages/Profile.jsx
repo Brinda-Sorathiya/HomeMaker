@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, Heart, History, Menu, LogOut, X } from 'lucide-react';
+import { PlusCircle, Heart, History, Menu, LogOut, X, User } from 'lucide-react';
 import AddProperty from '../components/profile/property/Property';
 import Wishlist from '../components/profile/Wishlist';
 import Transactions from '../components/profile/Transactions';
+import UserProfile from '../components/profile/User';
 import useAuth from '../context_store/auth_store';
 import { useNavigate } from 'react-router-dom';
 
 const sidebarItems = [
+  {
+    icon: User,
+    label: 'Profile',
+    component: UserProfile,
+  },
   {
     icon: PlusCircle,
     label: 'Add Property',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../context_store/auth_store';
+import { Plus, X } from 'lucide-react';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,6 +12,10 @@ const Register = () => {
     password: '',
     userType: 'Individual',
     contactNo: '',
+    officeName: '',
+    officeAddress: '',
+    officeContacts: [''],
+    licenseNo: ''
   });
 
   const handleChange = (e) => {
@@ -18,10 +23,44 @@ const Register = () => {
     clearError();
   };
 
+  const handleOfficeContactChange = (index, value) => {
+    const newContacts = [...formData.officeContacts];
+    newContacts[index] = value;
+    setFormData({ ...formData, officeContacts: newContacts });
+  };
+
+  const addOfficeContact = () => {
+    setFormData({
+      ...formData,
+      officeContacts: [...formData.officeContacts, '']
+    });
+  };
+
+  const removeOfficeContact = (index) => {
+    const newContacts = formData.officeContacts.filter((_, i) => i !== index);
+    setFormData({ ...formData, officeContacts: newContacts });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register(formData);
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        userType: formData.userType,
+        contactNo: formData.contactNo
+      };
+
+      if (formData.userType === 'Organization') {
+        userData.officeName = formData.officeName;
+        userData.officeAddress = formData.officeAddress;
+        userData.officeContacts = formData.officeContacts.filter(contact => contact.trim() !== '');
+      } else if (formData.userType === 'Agent') {
+        userData.licenseNo = formData.licenseNo;
+      }
+
+      await register(userData);
       navigate('/');
     } catch (error) {
       console.error('Registration failed:', error);
@@ -117,6 +156,84 @@ const Register = () => {
                 <option value="Agent">Agent</option>
               </select>
             </div>
+
+            {formData.userType === 'Organization' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Office Name</label>
+                  <input
+                    type="text"
+                    name="officeName"
+                    value={formData.officeName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-[#3A3A4D] border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-gray-500 transition duration-200"
+                    placeholder="Enter office name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Office Address</label>
+                  <textarea
+                    name="officeAddress"
+                    value={formData.officeAddress}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-[#3A3A4D] border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-gray-500 transition duration-200"
+                    placeholder="Enter office address"
+                    required
+                    rows="3"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Office Contact Numbers</label>
+                  {formData.officeContacts.map((contact, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="tel"
+                        value={contact}
+                        onChange={(e) => handleOfficeContactChange(index, e.target.value)}
+                        className="flex-1 px-4 py-3 bg-[#3A3A4D] border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-gray-500 transition duration-200"
+                        placeholder="Enter office contact number"
+                        required={index === 0}
+                      />
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => removeOfficeContact(index)}
+                          className="p-3 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addOfficeContact}
+                    className="mt-2 flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Another Contact
+                  </button>
+                </div>
+              </>
+            )}
+
+            {formData.userType === 'Agent' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">License Number</label>
+                <input
+                  type="text"
+                  name="licenseNo"
+                  value={formData.licenseNo}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#3A3A4D] border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-gray-500 transition duration-200"
+                  placeholder="Enter your license number"
+                  required
+                />
+              </div>
+            )}
 
             <div className="flex items-center">
               <input

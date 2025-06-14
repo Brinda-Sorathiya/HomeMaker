@@ -80,14 +80,14 @@ const EditPropertyCard = ({ property, onSave, onCancel }) => {
           URL.revokeObjectURL(image.preview);
         }
       });
-    };
+  };
   }, [newImages]);
 
   const handleRemoveImage = async (index, isExisting = true) => {
     if (isExisting) {
       const imageToRemove = imagesInput[index];
       setRemovedImages(prev => [...prev, imageToRemove]);
-      setImagesInput(prev => prev.filter((_, i) => i !== index));
+    setImagesInput(prev => prev.filter((_, i) => i !== index));
     } else {
       // Cleanup object URL before removing
       if (newImages[index].preview) {
@@ -121,19 +121,19 @@ const EditPropertyCard = ({ property, onSave, onCancel }) => {
         }))
       ];
 
-      const updatedData = {
-        ...editableProperty,
-        individual_amenities: individualAmenitiesInput,
-        shared_amenities: sharedAmenitiesInput,
-        floors: floorsInput,
+    const updatedData = {
+      ...editableProperty,
+      individual_amenities: individualAmenitiesInput,
+      shared_amenities: sharedAmenitiesInput,
+      floors: floorsInput,
         images: updatedImages,
-      };
+    };
 
-      // Remove owner contact info from being saved
-      delete updatedData.owner_email;
-      delete updatedData.owner_phone_number;
+    // Remove owner contact info from being saved
+    delete updatedData.owner_email;
+    delete updatedData.owner_phone_number;
 
-      onSave(updatedData);
+    onSave(updatedData);
     } catch (error) {
       console.error('Error handling images:', error);
       // You might want to show an error message to the user here

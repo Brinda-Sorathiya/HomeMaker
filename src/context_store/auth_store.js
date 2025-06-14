@@ -41,6 +41,19 @@ const useAuth = create((set) => ({
     }
   },
 
+  // Update user profile
+  updateUser: async (userData) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await axios.put('http://localhost:3000/auth/update', userData);
+      set({ user: response.data.user, loading: false });
+      return response.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Update failed', loading: false });
+      throw error;
+    }
+  },
+
   // Logout user
   logout: () => {
     // Remove token from localStorage
