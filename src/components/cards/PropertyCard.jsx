@@ -1,11 +1,14 @@
-import React from 'react';
-import { MapPin, Bed, Bath, Square, Home, Utensils } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Bed, Bath, Square, Home, Utensils, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useProperty from '../../context_store/property_store';
+import useAuth from '../../context_store/auth_store';
 
 const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
-  const { setCurrentInsightProperty } = useProperty();
+  const { user } = useAuth();
+  const { setCurrentInsightProperty, addToWishlist, removeFromWishlist, wishlist } = useProperty();
+  const [isWishlisted, setIsWishlisted] = useState(property.is_wish);
   const {
     title,
     type,
@@ -21,6 +24,10 @@ const PropertyCard = ({ property }) => {
     floors,
     apn
   } = property;
+
+  useEffect(() => {
+    setIsWishlisted(property.is_wish);
+  }, [property.is_wish]);
 
   const mainImage = images?.[0]?.url || 'https://via.placeholder.com/400x300';
 
@@ -44,6 +51,39 @@ const PropertyCard = ({ property }) => {
     navigate(`/insights/${apn}`);
   };
 
+  const handleWishlist = async (e) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    try {
+      
+      setIsWishlisted(!isWishlisted);
+      property.is_wish = !isWishlisted;
+
+      if (isWishlisted) {
+        //property should be removed from wishlist
+        useProperty.setState(state => ({
+          wishlist: state.wishlist.filter(p => p.apn !== property.apn)
+        }));
+      } else {
+        //property should be added in wishlist
+        useProperty.setState(state => ({
+          wishlist: [...state.wishlist, property]
+        }));
+      }
+
+      if (isWishlisted) {
+        await removeFromWishlist(property.apn, user.id);
+      } else {
+        await addToWishlist(property.apn, user.id);
+      }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+    }
+  };
+
   return (
     <div className="bg-[#1E1F2B] rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105">
       {/* Image */}
@@ -61,6 +101,14 @@ const PropertyCard = ({ property }) => {
             {available_for}
           </div>
         )}
+        <button
+          onClick={handleWishlist}
+          className="absolute bottom-2 right-2 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+        >
+          <Heart
+            className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-white'}`}
+          />
+        </button>
       </div>
 
       {/* Content */}
@@ -78,7 +126,7 @@ const PropertyCard = ({ property }) => {
         <div className="grid grid-cols-2 gap-2 text-gray-400 mb-4">
           <div className="flex items-center">
             <Square className="w-4 h-4 mr-1" />
-            <span>{area} sq ft</span>
+            <span>{area} sqft</span>
           </div>
           <div className="flex items-center">
             <Bed className="w-4 h-4 mr-1" />
@@ -94,7 +142,7 @@ const PropertyCard = ({ property }) => {
           </div>
           <div className="flex items-center">
             <Utensils className="w-4 h-4 mr-1" />
-            <span>{totalFacilities.kitchens} Kitchens</span>
+            <span>{totalFacilities.kitchens} Kits</span>
           </div>
         </div>
 

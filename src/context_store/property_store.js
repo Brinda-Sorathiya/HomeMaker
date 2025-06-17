@@ -9,12 +9,60 @@ const useProperty = create((set) => ({
   currentInsightProperty: null,
   loading: false,
   error: null,
+  wishlist: [],
 
   // Set modal state
   setIsAddPropertyModalOpen: (isOpen) => set({ isAddPropertyModalOpen: isOpen }),
 
   // Set current insight property
   setCurrentInsightProperty: (property) => set({ currentInsightProperty: property }),
+
+  // Add to wishlist
+  addToWishlist: async (propertyId, userId) => {
+    try {
+      const response = await axios.post('http://localhost:3000/property/wish', { propertyId, userId});
+      set(state => ({
+        properties: state.properties.map(p => 
+          p.apn === propertyId ? { ...p, is_wish: true } : p
+        ),
+      }));
+      return response.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to add to wishlist', loading: false });
+      throw error;
+    }
+  },
+
+  // Remove from wishlist
+  removeFromWishlist: async (propertyId, userId) => {
+    try {
+      await axios.delete(`http://localhost:3000/property/unwish/${propertyId}/${userId}`);
+      set(state => ({
+        properties: state.properties.map(p => 
+          p.apn === propertyId ? { ...p, is_wish: false } : p
+        ),
+      }));
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to remove from wishlist', loading: false });
+      throw error;
+    }
+  },
+
+  // Fetch wishlist - now filters from properties
+  fetchWishlist: async (userId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await axios.get(`http://localhost:3000/property/wishlist/${userId}`);
+      // set(state => {
+      //   wishlist = state.properties.filter()
+      // });
+      // { wishlist: response.data, loading: false });
+      return response.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to fetch wishlist', loading: false });
+      throw error;
+    }
+  },
 
   // Fetch amenities from backend
   fetchAmenities: async () => {
@@ -44,11 +92,13 @@ const useProperty = create((set) => ({
   },
 
   // Fetch all properties
-  fetchAllProperties: async () => {
+  fetchAllProperties: async (userId) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get('http://localhost:3000/property/properties');
-      set({ properties: response.data, loading: false });
+      const response = await axios.get(`http://localhost:3000/property/properties/${userId}`);
+      const tmp = response.data;
+      const ws = tmp.filter(p => p.is_wish);
+      set({ properties: tmp, wishlist: ws, loading: false });
       return response.data;
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to fetch properties', loading: false });

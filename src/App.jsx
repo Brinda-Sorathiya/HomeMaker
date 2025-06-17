@@ -13,7 +13,7 @@ import Insights from './pages/Insights';
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children }) => {
 // Public Route component (redirects to home if already authenticated)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  
+
   if (isAuthenticated) {
     return <Navigate to="/" />;
   }
@@ -32,32 +32,29 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+// In App.jsx
 function App() {
   const { initialize, user } = useAuth();
-  const { fetchAmenities, fetchPropertiesByOwner, fetchAllProperties } = useProperty();
+  const { fetchAmenities, fetchPropertiesByOwner, fetchAllProperties} = useProperty();
 
   useEffect(() => {
-    initialize();
-    fetchAmenities();
-    fetchAllProperties();
-    if (user?.id) {
-      fetchPropertiesByOwner(user.id);
-    }
+
     const fetchData = async () => {
       await initialize();
       fetchAmenities();
-      fetchAllProperties();
     };
-    
+
     fetchData();
-  }, [initialize, fetchAmenities, fetchAllProperties]);
+  }, [initialize, fetchAmenities]);
 
   // Separate useEffect for user-dependent operations
   useEffect(() => {
     if (user?.id) {
+      fetchAllProperties(user.id);
       fetchPropertiesByOwner(user.id);
+      
     }
-  }, [user, fetchPropertiesByOwner]);
+  }, [user, fetchPropertiesByOwner, fetchAllProperties]);
 
   return (
     <Router>
@@ -66,53 +63,58 @@ function App() {
         <main className="pt-16">
           <Routes>
             {/* Public Routes */}
-            <Route 
-              path="/login" 
+            <Route
+              path="/login"
               element={
                 <PublicRoute>
                   <Login />
                 </PublicRoute>
-              } 
+              }
             />
-            <Route 
-              path="/register" 
+            <Route
+              path="/register"
               element={
                 <PublicRoute>
                   <Register />
                 </PublicRoute>
-              } 
+              }
             />
 
             {/* Protected Routes */}
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
                 <ProtectedRoute>
                   <Homepage />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/profile" 
+            <Route
+              path="/profile"
               element={
                 <ProtectedRoute>
                   <Profile />
                 </ProtectedRoute>
-              } 
+              }
             />
 
-            <Route 
-              path="/explore" 
+            <Route
+              path="/explore"
               element={
                 <ProtectedRoute>
                   <Explore />
                 </ProtectedRoute>
-              } 
+              }
             />
 
-            <Route path="/insights/:apn" element={<ProtectedRoute>
+            <Route
+              path="/insights/:apn"
+              element={
+                <ProtectedRoute>
                   <Insights />
-                </ProtectedRoute>} />
+                </ProtectedRoute>
+              } 
+            />
 
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" />} />
