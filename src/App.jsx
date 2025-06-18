@@ -42,19 +42,13 @@ function App() {
     const fetchData = async () => {
       await initialize();
       fetchAmenities();
+      fetchAllProperties();
+      fetchPropertiesByOwner();
     };
 
     fetchData();
   }, [initialize, fetchAmenities]);
 
-  // Separate useEffect for user-dependent operations
-  useEffect(() => {
-    if (user?.id) {
-      fetchAllProperties(user.id);
-      fetchPropertiesByOwner(user.id);
-      
-    }
-  }, [user, fetchPropertiesByOwner, fetchAllProperties]);
 
   return (
     <Router>

@@ -75,9 +75,9 @@ const PropertyCard = ({ property }) => {
       }
 
       if (isWishlisted) {
-        await removeFromWishlist(property.apn, user.id);
+        await removeFromWishlist(property.apn);
       } else {
-        await addToWishlist(property.apn, user.id);
+        await addToWishlist(property.apn);
       }
     } catch (error) {
       console.error('Error toggling wishlist:', error);

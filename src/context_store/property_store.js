@@ -11,16 +11,13 @@ const useProperty = create((set) => ({
   error: null,
   wishlist: [],
 
-  // Set modal state
   setIsAddPropertyModalOpen: (isOpen) => set({ isAddPropertyModalOpen: isOpen }),
-
-  // Set current insight property
   setCurrentInsightProperty: (property) => set({ currentInsightProperty: property }),
 
   // Add to wishlist
-  addToWishlist: async (propertyId, userId) => {
+  addToWishlist: async (propertyId) => {
     try {
-      const response = await axios.post('http://localhost:3000/property/wish', { propertyId, userId});
+      const response = await axios.post('http://localhost:3000/property/wish', { propertyId });
       set(state => ({
         properties: state.properties.map(p => 
           p.apn === propertyId ? { ...p, is_wish: true } : p
@@ -34,9 +31,9 @@ const useProperty = create((set) => ({
   },
 
   // Remove from wishlist
-  removeFromWishlist: async (propertyId, userId) => {
+  removeFromWishlist: async (propertyId) => {
     try {
-      await axios.delete(`http://localhost:3000/property/unwish/${propertyId}/${userId}`);
+      await axios.delete(`http://localhost:3000/property/unwish/${propertyId}`);
       set(state => ({
         properties: state.properties.map(p => 
           p.apn === propertyId ? { ...p, is_wish: false } : p
@@ -44,22 +41,6 @@ const useProperty = create((set) => ({
       }));
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to remove from wishlist', loading: false });
-      throw error;
-    }
-  },
-
-  // Fetch wishlist - now filters from properties
-  fetchWishlist: async (userId) => {
-    set({ loading: true, error: null });
-    try {
-      const response = await axios.get(`http://localhost:3000/property/wishlist/${userId}`);
-      // set(state => {
-      //   wishlist = state.properties.filter()
-      // });
-      // { wishlist: response.data, loading: false });
-      return response.data;
-    } catch (error) {
-      set({ error: error.response?.data?.message || 'Failed to fetch wishlist', loading: false });
       throw error;
     }
   },
@@ -92,10 +73,10 @@ const useProperty = create((set) => ({
   },
 
   // Fetch all properties
-  fetchAllProperties: async (userId) => {
+  fetchAllProperties: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:3000/property/properties/${userId}`);
+      const response = await axios.get(`http://localhost:3000/property/properties`);
       const tmp = response.data;
       const ws = tmp.filter(p => p.is_wish);
       set({ properties: tmp, wishlist: ws, loading: false });
@@ -107,10 +88,10 @@ const useProperty = create((set) => ({
   },
 
   // Fetch properties by owner
-  fetchPropertiesByOwner: async (ownerId) => {
+  fetchPropertiesByOwner: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:3000/property/properties/owner/${ownerId}`);
+      const response = await axios.get(`http://localhost:3000/property/properties_owner`);
       set({ myproperties: response.data, loading: false });
       return response.data;
     } catch (error) {

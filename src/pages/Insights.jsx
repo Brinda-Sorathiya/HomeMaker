@@ -5,13 +5,6 @@ import useProperty from '../context_store/property_store';
 const Insights = () => {
   const { currentInsightProperty, loading, error } = useProperty();
 
-  // useEffect(() => {
-  //   // If we don't have the current property in the store, fetch all properties
-  //   if (!currentInsightProperty) {
-  //     fetchAllProperties();
-  //   }
-  // }, [currentInsightProperty, fetchAllProperties]);
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#1A1A2E] p-8">
