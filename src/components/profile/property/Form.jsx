@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, MapPin, Calendar, Building2, Utensils, Sparkles, BookOpen, IndianRupee, Layers } from 'lucide-react';
 import useProperty from '../../../context_store/property_store.js';
 import useAuth from '../../../context_store/auth_store.js';
-import { uploadMultipleImages } from '../../../utils/cloudinary';
+import { uploadMultipleImages } from '../../../lib/cloudinary.js';
 
 const AddPropertyForm = ({ onClose, onSuccess }) => {
   const { amenities, fetchAmenities, addProperty, loading } = useProperty();

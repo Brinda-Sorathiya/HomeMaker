@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Bed, Bath, Square, Home, Calendar, Building2, Utensils, Sparkles, BookOpen, IndianRupee, Phone, Layers, Edit, X } from 'lucide-react';
 import useProperty from '../../context_store/property_store';
-import { uploadToCloudinary, deleteFromCloudinary } from '../../utils/cloudinary';
+import { uploadToCloudinary, deleteFromCloudinary } from '../../lib/cloudinary';
 
 const EditPropertyCard = ({ property, onSave, onCancel }) => {
   const [editableProperty, setEditableProperty] = useState({});
