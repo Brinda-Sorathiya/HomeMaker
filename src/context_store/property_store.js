@@ -50,7 +50,6 @@ const useProperty = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.get('http://localhost:3000/property/amenities');
-      console.log(response)
       set({ amenities: response.data, loading: false });
       return response.data;
     } catch (error) {

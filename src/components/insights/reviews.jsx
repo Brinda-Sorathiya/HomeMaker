@@ -100,7 +100,7 @@ const Reviews = ({ propertyId }) => {
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (
-        <div className="bg-[#16213E] rounded-lg p-3 h-[600px] flex flex-col relative">
+        <div className="bg-[#16213E] rounded-lg p-3 h-[600px] flex flex-col relative mt-3">
             <h2 className="text-lg font-semibold text-white mb-2">Reviews</h2>
             {/* Top-right fixed button */}
             <div className="absolute top-[7px] right-[10px] z-10 flex items-center justify-center">

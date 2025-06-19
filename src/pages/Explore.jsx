@@ -47,7 +47,7 @@ const Explore = () => {
           ) : filteredProperties.length === 0 ? (
             <div className="text-gray-400">No properties found</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="place-items-center grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
               {filteredProperties.map((property) => (
                 <PropertyCard key={property.apn} property={property} />
               ))}

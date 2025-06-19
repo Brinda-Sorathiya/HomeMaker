@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import DetailsCard from '../components/cards/DetailsCard';
 import Reviews from '../components/insights/reviews';
+import Recomendations from '../components/insights/recomendations';
 import useProperty from '../context_store/property_store';
 import useReview from '../context_store/review_store';
 
@@ -8,7 +9,7 @@ const Insights = () => {
   const { currentInsightProperty, loading, error } = useProperty();
   const { clearReviews } = useReview();
 
-  useEffect(() => {
+  React.useEffect(() => {
     return () => {
       clearReviews();
     };
@@ -49,8 +50,9 @@ const Insights = () => {
       <div className="max-w-7xl mx-auto">
         <DetailsCard property={currentInsightProperty} />
         <div className="mt-8">
-          <Reviews propertyId={currentInsightProperty.apn} />
+          <Recomendations propertyId={currentInsightProperty.apn} />
         </div>
+        <Reviews propertyId={currentInsightProperty.apn} />
       </div>
     </div>
   );
