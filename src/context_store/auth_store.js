@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const useAuth = create((set) => ({
   user: null,
   isAuthenticated: false,
@@ -11,7 +13,7 @@ const useAuth = create((set) => ({
   register: async (userData) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post('http://localhost:3000/auth/register', userData);
+      const response = await axios.post(`${BACKEND_URL}/auth/register`, userData);
       set({ user: response.data.user, isAuthenticated: true, loading: false });
       return response.data;
     } catch (error) {
@@ -24,7 +26,7 @@ const useAuth = create((set) => ({
   login: async (credentials) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', credentials);
+      const response = await axios.post(`${BACKEND_URL}/auth/login`, credentials);
       const { token, user } = response.data;
       
       // Store token in localStorage
@@ -45,7 +47,7 @@ const useAuth = create((set) => ({
   updateUser: async (userData) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.put('http://localhost:3000/auth/update', userData);
+      const response = await axios.put(`${BACKEND_URL}/auth/update`, userData);
       set({ user: response.data.user, loading: false });
       return response.data;
     } catch (error) {
@@ -77,7 +79,7 @@ const useAuth = create((set) => ({
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
         // Fetch user data
-        const response = await axios.get('http://localhost:3000/auth/me');
+        const response = await axios.get(`${BACKEND_URL}/auth/me`);
         set({ 
           user: response.data.user, 
           isAuthenticated: true,

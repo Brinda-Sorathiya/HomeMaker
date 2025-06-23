@@ -1,13 +1,15 @@
 import { create } from 'zustand';
 import { io } from 'socket.io-client';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const useSocket = create((set) => ({
     socket: null,
     isConnected: false,
 
     // Initialize socket connection
     initializeSocket: (userId) => {
-        const socket = io('http://localhost:3000', {
+        const socket = io(`${BACKEND_URL}`, {
             query: { userId }
         });
 

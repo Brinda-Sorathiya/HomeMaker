@@ -3,6 +3,8 @@ import axios from 'axios';
 import useSocket from './socket_store';
 import useAuth from './auth_store';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const useReview = create((set, get) => ({
     reviews: [],
     loading: false,
@@ -13,7 +15,7 @@ const useReview = create((set, get) => ({
     fetchReviews: async (propertyId, userId) => {
         try {
             set({ loading: true, error: null });
-            const response = await axios.get(`http://localhost:3000/review/${propertyId}`);
+            const response = await axios.get(`${BACKEND_URL}/review/${propertyId}`);
             set({ reviews: response.data, loading: false });
             
             // current user has a review check
@@ -41,7 +43,7 @@ const useReview = create((set, get) => ({
             userReview: optimisticReview
         }));
         try {
-            const response = await axios.post('http://localhost:3000/review/send', {
+            const response = await axios.post(`${BACKEND_URL}/review/send`, {
                 propertyId,
                 ratings,
                 comments
@@ -75,7 +77,7 @@ const useReview = create((set, get) => ({
             userReview: optimisticReview
         }));
         try {
-            const response = await axios.put('http://localhost:3000/review/edit', {
+            const response = await axios.put(`${BACKEND_URL}/review/edit`, {
                 propertyId,
                 ratings,
                 comments

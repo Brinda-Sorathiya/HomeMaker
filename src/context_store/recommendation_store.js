@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import axios from 'axios';
 import useProperty from './property_store';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const useRecommendation = create((set, get) => ({
   recommendations: [],
   loading: false,
@@ -11,7 +13,7 @@ const useRecommendation = create((set, get) => ({
     if (!propertyId) return;
     set({ loading: true, error: null });
     try {
-      const res = await axios.get(`http://localhost:3000/recommend/${propertyId}`);
+      const res = await axios.get(`${BACKEND_URL}/recommend/${propertyId}`);
       const apnList = res.data;
       // Get properties from property store
       const properties = useProperty.getState().properties;

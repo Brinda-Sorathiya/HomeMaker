@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const useProperty = create((set) => ({
   isAddPropertyModalOpen: false,
   amenities: [],
@@ -17,7 +19,7 @@ const useProperty = create((set) => ({
   // Add to wishlist
   addToWishlist: async (propertyId) => {
     try {
-      const response = await axios.post('http://localhost:3000/property/wish', { propertyId });
+      const response = await axios.post(`${BACKEND_URL}/property/wish`, { propertyId });
       set(state => ({
         properties: state.properties.map(p => 
           p.apn === propertyId ? { ...p, is_wish: true } : p
@@ -33,7 +35,7 @@ const useProperty = create((set) => ({
   // Remove from wishlist
   removeFromWishlist: async (propertyId) => {
     try {
-      await axios.delete(`http://localhost:3000/property/unwish/${propertyId}`);
+      await axios.delete(`${BACKEND_URL}/property/unwish/${propertyId}`);
       set(state => ({
         properties: state.properties.map(p => 
           p.apn === propertyId ? { ...p, is_wish: false } : p
@@ -49,7 +51,7 @@ const useProperty = create((set) => ({
   fetchAmenities: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get('http://localhost:3000/property/amenities');
+      const response = await axios.get(`${BACKEND_URL}/property/amenities`);
       set({ amenities: response.data, loading: false });
       return response.data;
     } catch (error) {
@@ -62,7 +64,7 @@ const useProperty = create((set) => ({
   addProperty: async (propertyData) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post('http://localhost:3000/property/add', propertyData);
+      const response = await axios.post(`${BACKEND_URL}/property/add`, propertyData);
       set({ loading: false, isAddPropertyModalOpen: false });
       return response.data;
     } catch (error) {
@@ -75,7 +77,7 @@ const useProperty = create((set) => ({
   fetchAllProperties: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:3000/property/properties`);
+      const response = await axios.get(`${BACKEND_URL}/property/properties`);
       const tmp = response.data;
       const ws = tmp.filter(p => p.is_wish);
       set({ properties: tmp, wishlist: ws, loading: false });
@@ -90,7 +92,7 @@ const useProperty = create((set) => ({
   fetchPropertiesByOwner: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:3000/property/properties_owner`);
+      const response = await axios.get(`${BACKEND_URL}/property/properties_owner`);
       set({ myproperties: response.data, loading: false });
       return response.data;
     } catch (error) {
@@ -103,7 +105,7 @@ const useProperty = create((set) => ({
   updateProperty: async (apn, propertyData) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.put(`http://localhost:3000/property/update/${apn}`, propertyData);
+      const response = await axios.put(`${BACKEND_URL}/property/update/${apn}`, propertyData);
       
       // Update local state
       set(state => ({
