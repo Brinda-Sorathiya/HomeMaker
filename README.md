@@ -1,12 +1,46 @@
-# React + Vite
+# 🏡 HOMEMAKERS – AI-Powered Real Estate Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**HOMEMAKERS** is a full-stack real estate web application that helps users explore, analyze, and engage with property listings using intelligent search, content-based recommendations, and an AI-powered chatbot.
 
-Currently, two official plugins are available:
+Built using the **PERN stack** (PostgreSQL, Express, React, Node.js) with a Python-based AI microservice for natural-language interaction.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🌐 Frontend (React)
+- **Explore Page**: Displays property cards with search, filter, and wishlist features.
+- **Insight Pages**: Detailed property view with:
+  - Pricing, amenities, location map
+  - Floor-wise layout (bed, bath, kitchen, hall)
+  - Owner contact info & user reviews
+- **Rrecommendations** : Explore content based recommended(based on SQL quries) properties
+- **Wishlist & Review System**: Logged-in users can bookmark properties and leave/update reviews.
+
+### 🧠 AI Chatbot (Python + FastAPI)
+- Users can ask natural-language questions like:
+  - _"What is the average pricing of the properties located at xyz district per sq feet"_
+  - _"properties that have high review and decent neighbourhood"_
+- The chatbot:
+  1. Generates SQL using a language model (e.g., Gemini or OpenAI)
+  2. Executes the SQL via `asyncpg`
+  3. Returns clear, conversational answers
+
+### 🗃️ PostgreSQL Database
+- Optimized schema with normalized property tables, array fields for amenities, and review/wishlist relations.
+- Indexing for fast querying over large datasets.
+- Content-based recommendation queries for similar listings.
+
+## ⚙️ Tech Stack
+
+- **Frontend**: React, Tailwind CSS, Axios
+- **Backend**: Node.js, Express, PostgreSQL, JWT Auth
+- **AI Backend**: Python, FastAPI, asyncpg, LangGraph, Gemini
+- **Database**: PostgreSQL (hosted on NeonDB)
+
+---
+
+### 🔗 Related Repositories
+
+- 🔧 [Backend Repo (Node.js/Express)](https://github.com/Brinda-Sorathiya/HomeMaker_backend.git)
+- 🤖 [AI Backend Repo (Python/FastAPI)](https://github.com/Brinda-Sorathiya/homemaker_backend_bot.git)
