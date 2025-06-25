@@ -22,7 +22,7 @@ Built using the **PERN stack** (PostgreSQL, Express, React, Node.js) with a Pyth
   - _"What is the average pricing of the properties located at xyz district per sq feet"_
   - _"properties that have high review and decent neighbourhood"_
 - The chatbot:
-  1. Generates SQL using a language model (e.g., Gemini or OpenAI)
+  1. Generates SQL using a language model (Gemini)
   2. Executes the SQL via `asyncpg`
   3. Returns clear, conversational answers
 
