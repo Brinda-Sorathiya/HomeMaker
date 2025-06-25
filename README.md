@@ -28,7 +28,6 @@ Built using the **PERN stack** (PostgreSQL, Express, React, Node.js) with a Pyth
 
 ### 🗃️ PostgreSQL Database
 - Optimized schema with normalized property tables, array fields for amenities, and review/wishlist relations.
-- Indexing for fast querying over large datasets.
 - Content-based recommendation queries for similar listings.
 
 ## ⚙️ Tech Stack
