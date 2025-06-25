@@ -34,7 +34,7 @@ const PublicRoute = ({ children }) => {
 
 // In App.jsx
 function App() {
-  const { initialize, user } = useAuth();
+  const { initialize, what } = useAuth();
   const { fetchAmenities, fetchPropertiesByOwner, fetchAllProperties} = useProperty();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ function App() {
     };
 
     fetchData();
-  }, [initialize, fetchAmenities]);
+  }, [initialize, fetchAmenities, what]);
 
 
   return (

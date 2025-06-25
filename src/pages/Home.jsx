@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Home, Search, Building2, Heart, Shield, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const features = [
   {
@@ -43,11 +44,12 @@ const stats = [
 ];
 
 const Homepage = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#1A1A2E]">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-b from-[#1A1A2E] to-[#282A36]">
-        <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5"></div>
+        <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5 pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <motion.div
@@ -62,13 +64,12 @@ const Homepage = () => {
               <p className="text-xl text-gray-300 mb-8">
                 Discover the best properties in your desired location. We make finding your dream home easy and enjoyable.
               </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-hover bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold"
+              <button
+                className="bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold"
+                onClick={() => { navigate('/explore'); }}
               >
-                Get Started
-              </motion.button>
+                Explore
+              </button>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -91,7 +92,7 @@ const Homepage = () => {
 
       {/* Features Section */}
       <div className="relative bg-[#282A36] py-20">
-        <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5"></div>
+        <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5 pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

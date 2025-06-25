@@ -8,13 +8,19 @@ const useAuth = create((set) => ({
   isAuthenticated: false,
   loading: false,
   error: null,
+  what : false,
 
   // Register user
   register: async (userData) => {
     set({ loading: true, error: null });
     try {
       const response = await axios.post(`${BACKEND_URL}/auth/register`, userData);
-      set({ user: response.data.user, isAuthenticated: true, loading: false });
+
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+      }
+      set({ user: response.data.user, isAuthenticated: true, loading: false, what : true });
       return response.data;
     } catch (error) {
       set({ error: error.response?.data?.message || 'Registration failed', loading: false });
@@ -29,13 +35,9 @@ const useAuth = create((set) => ({
       const response = await axios.post(`${BACKEND_URL}/auth/login`, credentials);
       const { token, user } = response.data;
       
-      // Store token in localStorage
       localStorage.setItem('token', token);
-      
-      // Set default authorization header for all future requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-      set({ user, isAuthenticated: true, loading: false });
+      set({ user: user, isAuthenticated: true, loading: false, what : true });
       return response.data;
     } catch (error) {
       set({ error: error.response?.data?.message || 'Login failed', loading: false });
